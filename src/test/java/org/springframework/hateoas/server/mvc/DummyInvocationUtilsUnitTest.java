@@ -48,6 +48,22 @@ class DummyInvocationUtilsUnitTest extends TestUtils {
 		assertThat(link.getHref()).isEqualTo("http://localhost/sample/2/bar");
 	}
 
+	@Test
+	void returnsStringAsObject() {
+
+		Link link = linkTo(methodOn(SampleController.class).returnsStringAsObject(2L)).withSelfRel();
+
+		assertThat(link.getHref()).isEqualTo("http://localhost/sample/2/object");
+	}
+
+	@Test
+	void returnsStringAsCharSequence() {
+
+		Link link = linkTo(methodOn(SampleController.class).returnsStringAsCharSequence(2L)).withSelfRel();
+
+		assertThat(link.getHref()).isEqualTo("http://localhost/sample/2/charsequence");
+	}
+
 	@RequestMapping("/sample")
 	static class SampleController {
 
@@ -59,6 +75,16 @@ class DummyInvocationUtilsUnitTest extends TestUtils {
 		@RequestMapping("/{otherName}/bar")
 		HttpEntity<Void> someOtherMethod(@PathVariable(name = "otherName") Long id) {
 			return new ResponseEntity<>(HttpStatus.OK);
+		}
+
+		@RequestMapping("/{otherName}/object")
+		Object returnsStringAsObject(@PathVariable(name = "otherName") Long id) {
+			return "fails on JDK 17";
+		}
+
+		@RequestMapping("/{otherName}/charsequence")
+		CharSequence returnsStringAsCharSequence(@PathVariable(name = "otherName") Long id) {
+			return "works on JDK 17";
 		}
 	}
 }
